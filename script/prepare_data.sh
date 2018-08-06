@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# 准备数据
+echo -e "## Prepare data.\n"
+
+
+if [ ! -d "../data/THUCNews-5_2000" ]; then
+    if [ ! -f "../data/THUCNews-5_2000.zip" ];then
+        echo ">> Download dataset..."
+        wget -c https://v2ai.cn/assets/THUCNews-5_2000.zip -O ../data/THUCNews-5_2000.zip
+        echo ">> Unzip dataset..."
+        unzip ../data/THUCNews-5_2000.zip -d ../data/
+    else
+        echo "!! file is exists."
+    fi
+else
+    echo "!! data/THUCNews-5_2000 dir is exists."
+fi
+
+echo -e ">> Prepare data successful.\n"

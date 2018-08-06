@@ -1,0 +1,5 @@
+PyYAML
+numpy==1.15.0
+tensorflow==1.9.0
+caniusepython3==7.0.0
+scikit-learn==0.19.0

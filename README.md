@@ -2,7 +2,7 @@
 
 ## 1 简介
 
-`文本分类`是NLP的基本任务之一，希望通过学习本任务的联系，从而对NLP的任务流程和效果有大致的了解。
+`文本分类`是NLP的基本任务之一，通过学习此任务熟悉NLP的工作流程，同时了解NLP算法所能实现的效果。
 
 ## 2 数据
 
@@ -19,3 +19,36 @@
 这些数据保存在`/data/THUCNews-5_2000/`中。
 
 每个单独的文件是1条数据，文件名使用`-`切分后，前半部分是类别名称，后半部分是原 THUCNews 数据集中的 id 。
+
+## 3 项目结构
+
+```
+.
+├── script
+├── data
+│   └── THUCNews-5_2000
+├── model
+│   ├── pytorch
+│   ├── sklearn
+│   └── tensorflow
+├── config
+└── util
+```
+
+## 4 安装
+
+```bash
+# 克隆代码
+git clone https://github.com/kinggreenhall/text-classification.git
+
+cd text-classification
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 准备数据
+bash prepare_data.sh
+
+# 开始训练
+bash train_with_tensorflow.sh
+```
