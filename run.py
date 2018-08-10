@@ -37,5 +37,5 @@ if __name__ == '__main__':
                 if not batch_num % 10:
                     print(f">> step: {str(batch_num)} loss: {loss_result}")
 
-            print(np.argmax(train_target_batch, 1))
-            print(pred_result)
+                print(np.argmax(train_target_batch, 1))
+                print(pred_result)
