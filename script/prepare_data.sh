@@ -7,7 +7,7 @@ echo -e "## Prepare data.\n"
 if [ ! -d "../data/THUCNews-5_2000" ]; then
     if [ ! -f "../data/THUCNews-5_2000.zip" ];then
         echo ">> Download dataset..."
-        wget -c https://v2ai.cn/assets/THUCNews-5_2000.zip -O ../data/THUCNews-5_2000.zip
+        wget -c https://cnlp.dovolopor.com/downloads//THUCNews-5_2000.zip -O ../data/THUCNews-5_2000.zip
         echo ">> Unzip dataset..."
         unzip ../data/THUCNews-5_2000.zip -d ../data/
     else
