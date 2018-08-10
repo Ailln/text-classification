@@ -59,11 +59,15 @@ def get_vocab(vocab_path):
 
 
 def word2id(input_vocab, input_word_list, max_len):
-    all_input_id_list = []
-    for word_item in input_word_list:
-
+    all_input_id_list = np.zeros([len(input_word_list), max_len, 1])
+    max_len_input = 0
+    for i_input, word_item in enumerate(input_word_list):
         word_item_list = [word for word in word_item]
         word_item_len = len(word_item_list)
+
+        if word_item_len > max_len_input:
+            max_len_input = word_item_len
+
         if word_item_len >= max_len:
             word_item_list = word_item_list[:max_len]
         else:
@@ -76,8 +80,13 @@ def word2id(input_vocab, input_word_list, max_len):
             else:
                 word_id = input_vocab.index("UNK")
             input_id_list.append([word_id])
-        all_input_id_list.append(input_id_list)
+        all_input_id_list[i_input] = np.array(input_id_list)
 
+        read_percent = i_input/(len(input_word_list)/100)
+        if not i_input % 10:
+            print(f">> read data percent: {read_percent:4.2f}", end="\r")
+
+    print(f">> max len: {max_len_input}")
     return all_input_id_list
 
 
@@ -106,7 +115,7 @@ def gen_train_data(config):
     train_input, train_target, test_input, test_target = split_train_and_test(all_input_data)
 
     train_input_list = word2id(input_vocab, train_input, config["input_max_len"])
-    test_input_list = word2id(input_vocab, test_input,  config["input_max_len"])
+    test_input_list = word2id(input_vocab, test_input, config["input_max_len"])
 
     train_target_list = target2id(target_vocab, train_target)
     test_target_list = target2id(target_vocab, test_target)

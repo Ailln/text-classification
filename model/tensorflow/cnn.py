@@ -4,17 +4,32 @@ import tensorflow as tf
 class Model(object):
     def __init__(self, config):
         self.max_len = config["input_max_len"]
-        self.input_holder = tf.placeholder(tf.float32, [None, self.max_len, 1], "input_data")
-        self.target_holder = tf.placeholder(tf.int32, [None, 5], "target_data")
+        self.embedding_size = config["embedding_size"]
+        self.num_classes = config["num_classes"]
+        self.filter_size = config["filter_size"]
+        self.kernel_size = config["kernel_size"]
+        self.opt_name = config["opt_name"]
+        self.lr = config["learning_rate"]
+        self.input_holder = tf.placeholder(tf.float32, [None, self.max_len, self.embedding_size], "input_data")
+        self.target_holder = tf.placeholder(tf.int32, [None, self.num_classes], "target_data")
 
     def cnn(self):
-        conv = tf.layers.conv1d(self.input_holder, 32, 3, name="conv1d")
-        gmp = tf.reduce_max(conv, reduction_indices=[1], name='gmp')
-        logits = tf.layers.dense(gmp, 5, name="fc")
-        pred = tf.argmax(tf.nn.softmax(logits), 1)
+        # conv1d: inputs, filters, kernel_size
+        # conv: [batch_size, max_len, filters]
+        conv_output = tf.layers.conv1d(self.input_holder, self.filter_size, self.kernel_size, name="conv1d")
+        # gmp: [batch_size, filters]
+        gmp = tf.reduce_max(conv_output, reduction_indices=[1], name='gmp')
+        # logits: [batch_size, num_classes]
+        logits = tf.layers.dense(gmp, self.num_classes, name="fc")
+
         cross_entropy = tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=self.target_holder)
         loss = tf.reduce_mean(cross_entropy)
-        opt = tf.train.AdamOptimizer(0.0001)
+        if self.opt_name == "adam":
+            opt = tf.train.AdamOptimizer(self.lr)
+        else:
+            opt = tf.train.AdamOptimizer(self.lr)
         train_step = opt.minimize(loss)
+
+        pred = tf.argmax(tf.nn.softmax(logits), 1)
         return train_step, pred, loss
 
