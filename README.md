@@ -24,15 +24,18 @@
 
 ```
 .
-├── script
-├── data
+├── config # 配置
+├── data # 数据
 │   └── THUCNews-5_2000
-├── model
-│   ├── pytorch
-│   ├── sklearn
+│       ├── test
+│       ├── train
+│       └── validate
+├── model # 模型
 │   └── tensorflow
-├── config
-└── util
+├── output # 输出
+├── run # 入口
+├── script # 脚本
+└── util # 工具
 ```
 
 ## 4 安装
@@ -41,14 +44,25 @@
 # 克隆代码
 git clone https://github.com/kinggreenhall/text-classification.git
 
+# 进入项目
 cd text-classification
 
 # 安装依赖
 pip install -r requirements.txt
 
 # 准备数据
-bash prepare_data.sh
+bash ./script/prepare_data.sh
 
 # 开始训练
-bash train_with_tensorflow.sh
+python -m run.tensorflow_cnn
 ```
+
+## 5 可视化
+
+```bash
+# 需要手动替换 repalce_your_time
+tensorboard --logdir ./output/repalce_your_time/log/train
+```
+## 6 LICENSE
+
+[MIT License](./LICENSE)

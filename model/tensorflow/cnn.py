@@ -23,12 +23,13 @@ class Model(object):
         logits = tf.layers.dense(gmp, self.num_classes, name="fc")
 
         cross_entropy = tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=self.target_holder)
+
         loss = tf.reduce_mean(cross_entropy)
+        tf.summary.scalar('loss', loss)
         if self.opt_name == "adam":
-            opt = tf.train.AdamOptimizer(self.lr)
+            train_step = tf.train.AdamOptimizer(self.lr).minimize(loss)
         else:
-            opt = tf.train.AdamOptimizer(self.lr)
-        train_step = opt.minimize(loss)
+            train_step = tf.train.AdagradOptimizer(self.lr).minimize(loss)
 
         pred = tf.argmax(tf.nn.softmax(logits), 1)
         return train_step, pred, loss
