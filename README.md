@@ -74,3 +74,13 @@ tensorboard --logdir ./output/$train_time/log
 ## 6 LICENSE
 
 [MIT License](./LICENSE)
+
+## 7 TODO
+
+- [x] tensorflow cnn
+- [ ] flask server
+- [ ] tensorflow rnn
+
+## 8 联系方式
+
+kinggreenhall@gmail.com
