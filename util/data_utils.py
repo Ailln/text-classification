@@ -4,12 +4,6 @@ import yaml
 import numpy as np
 
 
-def get_config(config_path):
-    with open(config_path, "r", encoding="utf-8") as f_config:
-        config_data = yaml.load(f_config.read())
-    return config_data
-
-
 def get_vocab(vocab_path):
     with open(vocab_path, "r", encoding="utf-8") as f_vocab:
         vocab_list = []
@@ -34,16 +28,16 @@ def read_data(input_data_path):
     return input_data_list, target_data_list
 
 
-def word2id(input_vocab, input_word_list, max_len):
-    all_input_id_list = np.zeros([len(input_word_list), max_len, 1])
+def word2id(input_vocab, input_word_list, seq_length):
+    all_input_id_list = np.zeros([len(input_word_list), seq_length])
     for i_input, word_item in enumerate(input_word_list):
         word_item_list = [word for word in word_item]
         word_item_len = len(word_item_list)
 
-        if word_item_len >= max_len:
-            word_item_list = word_item_list[:max_len]
+        if word_item_len >= seq_length:
+            word_item_list = word_item_list[:seq_length]
         else:
-            word_item_list = word_item_list + ["PAD"] * (max_len-word_item_len)
+            word_item_list = word_item_list + ["PAD"] * (seq_length-word_item_len)
 
         input_id_list = []
         for word in word_item_list:
@@ -51,7 +45,7 @@ def word2id(input_vocab, input_word_list, max_len):
                 word_id = input_vocab.index(word)
             else:
                 word_id = input_vocab.index("UNK")
-            input_id_list.append([word_id])
+            input_id_list.append(word_id)
         all_input_id_list[i_input] = np.array(input_id_list)
 
         read_percent = i_input/(len(input_word_list)/100)
@@ -84,9 +78,9 @@ def gen_train_data(config):
     validate_input, validate_target = read_data(config["validate_data_path"])
 
     print("\n>> train: word to id...")
-    train_input_list = word2id(input_vocab, train_input, config["input_max_len"])
+    train_input_list = word2id(input_vocab, train_input, config["seq_length"])
     print(">> validate: word to id...")
-    validate_input_list = word2id(input_vocab, validate_input, config["input_max_len"])
+    validate_input_list = word2id(input_vocab, validate_input, config["seq_length"])
 
     print("\n>> train: target to id...")
     train_target_list = target2id(target_vocab, train_target)
@@ -106,7 +100,7 @@ def gen_test_data(config):
     test_input, test_target = read_data(config["test_data_path"])
 
     print("\n>> test: word to id...")
-    test_input_list = word2id(input_vocab, test_input, config["input_max_len"])
+    test_input_list = word2id(input_vocab, test_input, config["seq_length"])
 
     print("\n>> test: target to id...")
     test_target_list = target2id(target_vocab, test_target)

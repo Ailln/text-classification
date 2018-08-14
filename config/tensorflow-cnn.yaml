@@ -6,15 +6,17 @@ input_vocab_path: "./data/input_vocab.txt"
 target_vocab_path: "./data/target_vocab.txt"
 output_path: "./output/"
 
-input_max_len: 1000
-embedding_size: 1
+seq_length: 1000
 num_classes: 5
-
-filter_size: 128
+filter_size: 256
 kernel_size: 5
+vocab_size: 5000
+embedding_size: 50
 
 batch_size: 64
 epoch_size: 200
+num_save_epoch: 2
 learning_rate: 0.01
+dropout_keep_prob: 0.5
 
 opt_name: adam

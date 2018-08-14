@@ -1,33 +1,21 @@
-from datetime import datetime
+import sys
 
 import numpy as np
 import tensorflow as tf
+from sklearn.metrics import classification_report
 
 from util import data_utils
 from util import batch_utils
+from util import conf_utils
 from util import output_utils
 from model.tensorflow import cnn
 
 
-def train():
-    time_now = datetime.now().strftime("%y-%m-%d_%H-%M-%S")
-    print(f">> start time: {time_now}\n")
-
-    config_path = "./config/tensorflow-cnn.yaml"
-    config = data_utils.get_config(config_path)
-    config["config_path"] = config_path
-    config["time_now"] = time_now
-    config["output_path_with_time"] = config["output_path"] + config["time_now"] + "/"
-    config["log_train_path"] = config["output_path_with_time"]+"log/train/"
-    config["log_test_path"] = config["output_path_with_time"]+"log/test/"
-
-    output_utils.check_path(config["log_train_path"])
-    output_utils.check_path(config["log_test_path"])
-    output_utils.cp_config(config)
-    output_utils.cp_data(config)
-
+def train(config_path):
+    config = conf_utils.init_train_config(config_path)
     batch_size = config["batch_size"]
     epoch_size = config["epoch_size"]
+    num_save_epoch = config["num_save_epoch"]
 
     train_input, train_target, validate_input, validate_target = data_utils.gen_train_data(config)
 
@@ -37,15 +25,18 @@ def train():
     print(">> build model...")
     model = cnn.Model(config)
     train_step, pred, cost = model.cnn()
-    print(">> start tf...")
+
     with tf.Session() as sess:
         init = tf.global_variables_initializer()
         sess.run(init)
+
+        saver = tf.train.Saver()
 
         merged = tf.summary.merge_all()
         train_writer = tf.summary.FileWriter(config["log_train_path"], sess.graph)
 
         for epoch in range(epoch_size):
+            epoch = epoch + 1
             batch_gen = batch_utils.make_batch(train_input, train_target, batch_size)
             for batch_num in range(len(train_input)//batch_size):
                 train_input_batch, train_target_batch = batch_gen.__next__()
@@ -70,6 +61,65 @@ def train():
                     acc_val = np.sum(input_validate_arr == target_validate_arr)*100/len(input_validate_arr)
                     print(f">> e:{epoch:3} s:{batch_num:2} loss:{loss:5.4} acc_t: {acc_train:3f} acc_v: {acc_val:3f}")
 
+            if not epoch % num_save_epoch:
+                saver.save(sess, config["model_path"]+"model", global_step=epoch)
+                print(">> save model...")
+
+        time_str = config["time_now"]
+        print(f"train time str: {time_str}, put it after test.")
+
+
+def test(time_str):
+    config = conf_utils.init_test_config(time_str)
+    batch_size = config["batch_size"]
+
+    test_input, test_target = data_utils.gen_test_data(config)
+    target_vocab = data_utils.get_vocab(config["target_vocab_path"])
+
+    print(">> build model...")
+    model = cnn.Model(config)
+    _, pred, _ = model.cnn()
+
+    with tf.Session() as sess:
+        saver = tf.train.Saver()
+        lastest_checkpoint_name = tf.train.latest_checkpoint(config["model_path"])
+        print(f">> last checkpoint: {lastest_checkpoint_name}")
+        saver.restore(sess, lastest_checkpoint_name)
+
+        batch_gen = batch_utils.make_batch(test_input, test_target, batch_size, False)
+        input_target_list = []
+        pred_target_list = []
+        for batch_num in range(len(test_input)//batch_size):
+            test_input_batch, test_target_batch = batch_gen.__next__()
+
+            pred_target_arr = sess.run(pred, feed_dict={
+                model.input_holder: test_input_batch,
+                model.target_holder: test_target_batch
+            })
+
+            input_target_arr = np.argmax(test_target_batch, 1)
+            input_target_list.extend(input_target_arr.tolist())
+            pred_target_list.extend(pred_target_arr.tolist())
+
+        input_target_list = [target_vocab[i_data] for i_data in input_target_list]
+        pred_target_list = [target_vocab[p_data] for p_data in pred_target_list]
+        report = classification_report(input_target_list, pred_target_list)
+        print(f"\n>> REPORT:\n{report}")
+
+        output_utils.save_report(config, report)
+
 
 if __name__ == '__main__':
-    train()
+    args = sys.argv
+    if len(args) == 1:
+        config_data_path = "./config/tensorflow-cnn.yaml"
+        train(config_data_path)
+    elif len(args) == 3:
+        if args[1] == "train":
+            train(args[2])
+        elif args[1] == "test":
+            test(args[2])
+        else:
+            raise ValueError("The first parameter is wrong, only support train or test!")
+    else:
+        raise ValueError("Incorrent parameter length!")

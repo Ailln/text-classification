@@ -22,9 +22,15 @@ def cp_config(config):
 
 def cp_data(config):
     target_path = config["output_path_with_time"] + "data/"
-    check_path(target_path)
-    input_vocab_path = config["data_path"] + "input_vocab.txt"
-    shutil.copy(input_vocab_path, target_path)
-    target_vocab_path = config["data_path"] + "target_vocab.txt"
-    shutil.copy(target_vocab_path, target_path)
+    shutil.copytree(config["data_path"], target_path)
 
+
+def cp_model(config):
+    target_path = config["test_path_with_time"] + "model/"
+    shutil.copytree(config["model_path"], target_path)
+
+
+def save_report(config, report_data):
+    save_path = config["test_path_with_time"] + "report.txt"
+    with open(save_path, "w", encoding="utf-8") as f_save:
+        f_save.write(report_data)
