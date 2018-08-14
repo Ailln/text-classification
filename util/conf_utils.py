@@ -40,3 +40,12 @@ def init_test_config(train_time_str):
 
     output_utils.cp_model(config)
     return config
+
+
+def init_server_config(train_time_str):
+    time_now = datetime.now().strftime("%y-%m-%d_%H-%M-%S")
+    print(f">> start time: {time_now}\n")
+
+    test_config_path = list(Path(f"./output/{train_time_str}/config/").glob("*.yaml"))[0]
+    config = read_config(test_config_path)
+    return config

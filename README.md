@@ -38,6 +38,7 @@
 ├── output # 输出
 ├── run # 入口
 ├── script # 脚本
+├── server # 部署
 └── util # 工具
 ```
 
@@ -71,16 +72,26 @@ python -m run.tensorflow_cnn test $train_time
 # 使用 Tensorboard 进行可视化（需要替换 $train_time）
 tensorboard --logdir ./output/$train_time/log
 ```
-## 6 LICENSE
 
-[MIT License](./LICENSE)
+## 6 部署
+
+```bash
+# 启动 flask 服务
+python -m server.flask_app
+# 发送 test 数据
+pythom -m server.send_data
+```
 
 ## 7 TODO
 
 - [x] tensorflow cnn
-- [ ] flask server
+- [x] flask server
 - [ ] tensorflow rnn
 
 ## 8 联系方式
 
 kinggreenhall@gmail.com
+
+## 9 LICENSE
+
+[MIT License](./LICENSE)

@@ -109,6 +109,23 @@ def test(time_str):
         output_utils.save_report(config, report)
 
 
+def get_server_sess(time_str):
+    config = conf_utils.init_test_config(time_str)
+    input_vocab = data_utils.get_vocab(config["input_vocab_path"])
+    target_vocab = data_utils.get_vocab(config["target_vocab_path"])
+
+    print(">> build model...")
+    model = cnn.Model(config)
+    _, pred, _ = model.cnn()
+
+    sess = tf.InteractiveSession()
+    saver = tf.train.Saver()
+    lastest_checkpoint_name = tf.train.latest_checkpoint(config["model_path"])
+    print(f">> last checkpoint: {lastest_checkpoint_name}")
+    saver.restore(sess, lastest_checkpoint_name)
+    return sess, pred, target_vocab, input_vocab, model
+
+
 if __name__ == '__main__':
     args = sys.argv
     if len(args) == 1:
