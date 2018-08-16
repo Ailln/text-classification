@@ -11,6 +11,7 @@ class Model(object):
         self.kernel_size = config["kernel_size"]
         self.opt_name = config["opt_name"]
         self.lr = config["learning_rate"]
+        self.dropout_keep_prob = config["dropout_keep_prob"]
         self.input_holder = tf.placeholder(tf.int32, [None, self.seq_length], "input_data")
         self.target_holder = tf.placeholder(tf.int32, [None, self.num_classes], "target_data")
 
@@ -31,7 +32,12 @@ class Model(object):
         # logits: [batch_size, num_classes]
         logits = tf.layers.dense(gmp, self.num_classes, name="fc")
 
-        cross_entropy = tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=self.target_holder)
+        # dropout layer
+        # 防止过拟合
+        with tf.name_scope("dropout_layer"):
+            dropout_logits = tf.nn.dropout(logits, self.dropout_keep_prob)
+
+        cross_entropy = tf.nn.softmax_cross_entropy_with_logits_v2(logits=dropout_logits, labels=self.target_holder)
 
         loss = tf.reduce_mean(cross_entropy)
         tf.summary.scalar('loss', loss)

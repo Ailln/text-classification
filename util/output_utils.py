@@ -30,7 +30,7 @@ def cp_model(config):
     shutil.copytree(config["model_path"], target_path)
 
 
-def save_report(config, report_data):
-    save_path = config["test_path_with_time"] + "report.txt"
+def save_metrics(config, save_name, metrics_data):
+    save_path = config["test_path_with_time"] + save_name
     with open(save_path, "w", encoding="utf-8") as f_save:
-        f_save.write(report_data)
+        f_save.write(metrics_data)

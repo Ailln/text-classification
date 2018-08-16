@@ -6,7 +6,7 @@ input_vocab_path: "./data/input_vocab.txt"
 target_vocab_path: "./data/target_vocab.txt"
 output_path: "./output/"
 
-seq_length: 1000
+seq_length: 100
 num_classes: 5
 filter_size: 256
 kernel_size: 5

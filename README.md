@@ -15,15 +15,26 @@
 ### 2.2 新数据集（THUCNews-5_2000）
 
 从 THUCNews 数据集中选取类别名词词义相差比较大的 5 组数据，分别为：
-`体育`、`房产`、`股票`、`时政`、`游戏`。
+```
+体育, 房产, 股票, 时政, 游戏
+```
 接下来，从每 1 组数据中随机取 2000 条放入的新的数据集中，最终得到 1 万条新闻数据。
 将新数据集按照 8:2:2 划分成训练集（train set）、验证集（validate set）、测试集（test set），保存在`/data/THUCNews-5_2000/`中。
+
+- train set: 1600 * 5
+- validate set: 200 * 5
+- test set: 200 * 5
+
+数据生成过程见`/script/prepare_data.sh`。
 
 ### 2.3 单个数据介绍
 
 每个单独的文件是 1 条数据，文件名使用`-`切分后，前半部分是类别名称，后半部分是原 THUCNews 数据集中的 id 。
-
-## 3 项目结构
+举例：
+```bash
+体育-76.txt
+```
+## 3 结构
 
 ```
 .
@@ -88,9 +99,9 @@ pythom -m server.send_data
 - [x] flask server
 - [ ] tensorflow rnn
 
-## 8 联系方式
+## 8 参考
 
-kinggreenhall@gmail.com
+- [text-classification-cnn-rnn](https://github.com/gaussic/text-classification-cnn-rnn)
 
 ## 9 LICENSE
 

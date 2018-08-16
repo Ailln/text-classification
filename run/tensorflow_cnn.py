@@ -2,7 +2,7 @@ import sys
 
 import numpy as np
 import tensorflow as tf
-from sklearn.metrics import classification_report
+from sklearn import metrics
 
 from util import data_utils
 from util import batch_utils
@@ -35,6 +35,8 @@ def train(config_path):
         merged = tf.summary.merge_all()
         train_writer = tf.summary.FileWriter(config["log_train_path"], sess.graph)
 
+        max_val_acc = 0
+        max_key = 0
         for epoch in range(epoch_size):
             epoch = epoch + 1
             batch_gen = batch_utils.make_batch(train_input, train_target, batch_size)
@@ -61,12 +63,23 @@ def train(config_path):
                     acc_val = np.sum(input_validate_arr == target_validate_arr)*100/len(input_validate_arr)
                     print(f">> e:{epoch:3} s:{batch_num:2} loss:{loss:5.4} acc_t: {acc_train:3f} acc_v: {acc_val:3f}")
 
+                    if acc_val > max_val_acc:
+                        max_val_acc = acc_val
+                        max_key = 0
+                    else:
+                        max_key += 1
+
             if not epoch % num_save_epoch:
                 saver.save(sess, config["model_path"]+"model", global_step=epoch)
                 print(">> save model...")
 
+            # 1000 batch val acc 没有增长，提前停止
+            if max_key > 200:
+                print(">> No optimization for a long time, auto stopping...")
+                break
+
         time_str = config["time_now"]
-        print(f"train time str: {time_str}, put it after test.")
+        print(f">> use this command for test:\npython -m run.tensorflow_cnn test {time_str} ")
 
 
 def test(time_str):
@@ -103,10 +116,13 @@ def test(time_str):
 
         input_target_list = [target_vocab[i_data] for i_data in input_target_list]
         pred_target_list = [target_vocab[p_data] for p_data in pred_target_list]
-        report = classification_report(input_target_list, pred_target_list)
+        report = metrics.classification_report(input_target_list, pred_target_list)
         print(f"\n>> REPORT:\n{report}")
+        output_utils.save_metrics(config, "report.txt", report)
 
-        output_utils.save_report(config, report)
+        cm = metrics.confusion_matrix(input_target_list, pred_target_list)
+        print(f"\n>> Confusion Matrix:\n{cm}")
+        output_utils.save_metrics(config, "confusion_matrix.txt", str(cm))
 
 
 def get_server_sess(time_str):
