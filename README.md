@@ -45,7 +45,9 @@
 │       ├── validate
 │       └── test
 ├── model # 模型
-│   └── tensorflow
+│   ├── pytorch
+│   ├── tensorflow
+│   └── sklearn
 ├── output # 输出
 ├── run # 入口
 ├── script # 脚本
@@ -83,6 +85,7 @@ python -m run.tensorflow_cnn test $train_time
 # 使用 Tensorboard 进行可视化（需要替换 $train_time）
 tensorboard --logdir ./output/$train_time/log
 ```
+> 当前仅 tensorflow 可用
 
 ## 6 部署
 
@@ -93,11 +96,18 @@ python -m server.flask_app
 pythom -m server.send_data
 ```
 
+> 当前仅 tensorflow 可用
+
 ## 7 TODO
 
 - [x] tensorflow cnn
-- [x] flask server
 - [ ] tensorflow rnn
+- [x] tensorflow flask server
+- [x] pytorch cnn
+- [ ] pytorch rnn
+- [ ] pytorch flask server
+- [x] sklearn svm
+- [x] sklearn bayes
 
 ## 8 参考
 
