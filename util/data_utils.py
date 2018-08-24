@@ -50,7 +50,7 @@ def word2id(input_vocab, input_word_list, seq_length):
 
         read_percent = i_input/(len(input_word_list)/100)
         if not i_input % 10:
-            print(f">> convert percent: {read_percent:3.1f}%", end="\r")
+            print(f">> convert: {read_percent:3.1f}%", end="\r")
 
     return all_input_id_list
 
@@ -67,27 +67,30 @@ def target2id(target_vocab, target_data):
 
 
 def gen_train_data(config):
-    print("\n>> start read input vocab...")
-    input_vocab = get_vocab(config["input_vocab_path"])
-    print(">> start read target vocab...")
-    target_vocab = get_vocab(config["target_vocab_path"])
-
     print("\n>> start read train data...")
     train_input, train_target = read_data(config["train_data_path"])
     print(">> start read validate data...")
     validate_input, validate_target = read_data(config["validate_data_path"])
 
-    print("\n>> train: word to id...")
-    train_input_list = word2id(input_vocab, train_input, config["seq_length"])
-    print(">> validate: word to id...")
-    validate_input_list = word2id(input_vocab, validate_input, config["seq_length"])
+    if config["frame_class"] == "sklearn":
+        return train_input, train_target,  validate_input, validate_target
+    else:
+        print("\n>> start read input vocab...")
+        input_vocab = get_vocab(config["input_vocab_path"])
+        print(">> start read target vocab...")
+        target_vocab = get_vocab(config["target_vocab_path"])
 
-    print("\n>> train: target to id...")
-    train_target_list = target2id(target_vocab, train_target)
-    print(">> validate: target to id...")
-    validate_target_list = target2id(target_vocab, validate_target)
+        print("\n>> word to id: train...")
+        train_input_list = word2id(input_vocab, train_input, config["seq_length"])
+        print(">> word to id: validate...")
+        validate_input_list = word2id(input_vocab, validate_input, config["seq_length"])
 
-    return train_input_list, train_target_list, validate_input_list, validate_target_list
+        print("\n>> target to id: train...")
+        train_target_list = target2id(target_vocab, train_target)
+        print(">> target to id: validate...")
+        validate_target_list = target2id(target_vocab, validate_target)
+
+        return train_input_list, train_target_list, validate_input_list, validate_target_list
 
 
 def gen_test_data(config):
@@ -99,10 +102,12 @@ def gen_test_data(config):
     print("\n>> start read test data...")
     test_input, test_target = read_data(config["test_data_path"])
 
-    print("\n>> test: word to id...")
-    test_input_list = word2id(input_vocab, test_input, config["seq_length"])
+    if config["frame_class"] == "sklearn":
+        return test_input, test_target
+    else:
+        print("\n>> word to id: test...")
+        test_input_list = word2id(input_vocab, test_input, config["seq_length"])
+        print("\n>> target to id: test...")
+        test_target_list = target2id(target_vocab, test_target)
 
-    print("\n>> test: target to id...")
-    test_target_list = target2id(target_vocab, test_target)
-
-    return test_input_list, test_target_list
+        return test_input_list, test_target_list

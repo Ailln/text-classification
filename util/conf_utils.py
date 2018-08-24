@@ -25,7 +25,7 @@ def init_train_config(config_path):
     output_utils.check_path(config["log_train_path"])
     output_utils.check_path(config["model_path"])
     output_utils.cp_config(config)
-    output_utils.cp_data(config)
+    # output_utils.cp_data(config)
     return config
 
 
