@@ -111,8 +111,14 @@ pythom -m server.send_data
 
 ## 8 参考
 
+### 代码
+
 - [text-classification-cnn-rnn](https://github.com/gaussic/text-classification-cnn-rnn)
 
-## 9 LICENSE
+### 论文
+
+- [How to Fine-Tune BERT for Text Classification?](https://arxiv.org/pdf/1905.05583.pdf)
+
+## 9 执照
 
 [MIT License](./LICENSE)
