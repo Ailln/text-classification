@@ -8,24 +8,47 @@
 
 ### 2.1 THUCNews 数据集
 
-> [THUCNews](http://thuctc.thunlp.org/#%E4%B8%AD%E6%96%87%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB%E6%95%B0%E6%8D%AE%E9%9B%86THUCNews)
-是根据新浪新闻 RSS 订阅频道 2005~2011 年间的历史数据筛选过滤生成，包含 74 万篇新闻文档（2.19 GB），均为 UTF-8 纯文本格式。
-我们在原始新浪新闻分类体系的基础上，重新整合划分出 14 个候选分类类别：财经、彩票、房产、股票、家居、教育、科技、社会、时尚、时政、体育、星座、游戏、娱乐。
+我们选用了了开源的中文文本分类数据集`THUCNews`，介绍如下：
 
-### 2.2 新数据集（THUCNews-5_2000）
+> [THUCNews](http://thuctc.thunlp.org/) 是根据新浪新闻 RSS 订阅频道 2005~2011 年间的历史数据筛选过滤生成，包含 74 万篇新闻文档（2.19 GB），均为 UTF-8 纯文本格式。
+> 我们在原始新浪新闻分类体系的基础上，重新整合划分出 14 个候选分类类别：财经、彩票、房产、股票、家居、教育、科技、社会、时尚、时政、体育、星座、游戏、娱乐。
 
-从 THUCNews 数据集中选取类别名词词义相差比较大的 5 组数据，分别为：
-```
-体育, 房产, 股票, 时政, 游戏
-```
-接下来，从每 1 组数据中随机取 2000 条放入的新的数据集中，最终得到 1 万条新闻数据。
-将新数据集按照 8:2:2 划分成训练集（train set）、验证集（validate set）、测试集（test set），保存在`/data/THUCNews-5_2000/`中。
+| 序号 | 类别 | 数量 |
+| :-: | :-: | :-: |
+| 1 | 财经 | 37098 |
+| 2 | 彩票 | 7588 |
+| 3 | 房产 | 20050 |
+| 4 | 股票 | 154398 |
+| 5 | 家居 | 32586 |
+| 6 | 教育 | 41936 |
+| 7 | 科技 | 162929 |
+| 8 | 社会 | 50849 |
+| 9 | 时尚 | 13368 |
+| 10 | 时政 | 63086 |
+| 11 | 体育 | 131604 |
+| 12 | 星座 | 3578 |
+| 13 | 游戏 | 24373 |
+| 14 | 娱乐 | 92632 |
+
+### 2.2 新数据集 1（THUCNews-5_2000，低配置）
+
+由于原数据集较大，对硬件要求较高，因此我们先从中提取部分数据再使用。操作过程如下：
+
+1. 我们从 THUCNews 数据集中选取类别名词词义相差比较大的 5 组数据，分别为： `体育, 房产, 股票, 时政, 游戏`。
+2. 从每 1 组数据中随机取 2000 条放入的新的数据集中，最终得到 1 万条新闻数据。
+3. 将新数据集按照 `8:2:2` 划分成训练集（train set）、验证集（validate set）、测试集（test set），保存在 `/data/THUCNews-5_2000/` 中。
+
+数据集数量为：
 
 - train set: 1600 * 5
 - validate set: 200 * 5
 - test set: 200 * 5
 
-数据生成过程见`/script/prepare_data.sh`。
+获取数据方式见 `/script/prepare_data.sh`。
+
+### 2.2 新数据集 2（THUCNews-14_10000，中配置）
+
+TODO
 
 ### 2.3 单个数据介绍
 
@@ -85,7 +108,8 @@ python -m run.tensorflow_cnn test $train_time
 # 使用 Tensorboard 进行可视化（需要替换 $train_time）
 tensorboard --logdir ./output/$train_time/log
 ```
-> 当前仅 tensorflow 可用
+
+> 当前仅 tensorflow 可用。
 
 ## 6 部署
 
@@ -96,7 +120,7 @@ python -m server.flask_app
 pythom -m server.send_data
 ```
 
-> 当前仅 tensorflow 可用
+> 当前仅 tensorflow 可用。
 
 ## 7 TODO
 
@@ -111,14 +135,11 @@ pythom -m server.send_data
 
 ## 8 参考
 
-### 代码
-
+- [THUCTC: 一个高效的中文文本分类工具包](http://thuctc.thunlp.org/)
 - [text-classification-cnn-rnn](https://github.com/gaussic/text-classification-cnn-rnn)
-
-### 论文
-
 - [How to Fine-Tune BERT for Text Classification?](https://arxiv.org/pdf/1905.05583.pdf)
 
-## 9 执照
+## 9 许可证
 
-[MIT License](./LICENSE)
+[![](https://award.dovolopor.com?lt=License&rt=MIT&rbc=green)](./LICENSE)
+[![](https://award.dovolopor.com?lt=Ailln's&rt=idea&lbc=lightgray&rbc=red&ltc=red)](https://github.com/Ailln/award)
