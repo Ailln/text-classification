@@ -8,7 +8,7 @@ output_path: "./output/"
 
 frame_class: "pytorch"
 
-seq_length: 10000
+seq_length: 1000
 num_classes: 5
 filter_size: 256
 kernel_size: 3
@@ -16,10 +16,15 @@ vocab_size: 5000
 embedding_size: 50
 
 batch_size: 64
-epoch_size: 200
+epoch_size: 100
 num_save_epoch: 2
 learning_rate: 0.01
 dropout_keep_prob: 0.5
 
+# cnn
 opt_name: adam
 model_class: conv1d
+
+# rnn
+hidden_size: 256
+num_layers: 1

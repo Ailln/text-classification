@@ -69,6 +69,10 @@ def target2id(target_vocab, target_data):
 def gen_train_data(config):
     print("\n>> start read train data...")
     train_input, train_target = read_data(config["train_data_path"])
+
+    if len(train_input) == 0:
+        raise Exception("!! train data is None, please run `bash ./script/prepare_data.sh` first.")
+
     print(">> start read validate data...")
     validate_input, validate_target = read_data(config["validate_data_path"])
 
@@ -94,20 +98,32 @@ def gen_train_data(config):
 
 
 def gen_test_data(config):
-    print(">> start read input vocab...")
-    input_vocab = get_vocab(config["input_vocab_path"])
-    print(">> start read target vocab...")
-    target_vocab = get_vocab(config["target_vocab_path"])
-
     print("\n>> start read test data...")
     test_input, test_target = read_data(config["test_data_path"])
 
     if config["frame_class"] == "sklearn":
         return test_input, test_target
     else:
+        print(">> start read input vocab...")
+        input_vocab = get_vocab(config["input_vocab_path"])
+        print(">> start read target vocab...")
+        target_vocab = get_vocab(config["target_vocab_path"])
+
         print("\n>> word to id: test...")
         test_input_list = word2id(input_vocab, test_input, config["seq_length"])
         print("\n>> target to id: test...")
         test_target_list = target2id(target_vocab, test_target)
 
         return test_input_list, test_target_list
+
+
+def gen_infer_data(config, text):
+    print(">> start read input vocab...")
+    input_vocab = get_vocab(config["input_vocab_path"])
+    print(">> start read target vocab...")
+    target_vocab = get_vocab(config["target_vocab_path"])
+
+    print("\n>> word to id: test...")
+    infer_input_list = word2id(input_vocab, [text, text], config["seq_length"])
+
+    return infer_input_list, target_vocab

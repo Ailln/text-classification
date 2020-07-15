@@ -14,6 +14,7 @@ class Model(nn.Module):
         self.opt_name = config["opt_name"]
         self.lr = config["learning_rate"]
         self.dropout_keep_prob = config["dropout_keep_prob"]
+        self.model_class = config["model_class"]
 
         self.embed = nn.Embedding(self.vocab_size, self.embedding_size)
 
@@ -29,16 +30,15 @@ class Model(nn.Module):
             nn.Softmax(1)
         )
 
-    def forward(self, input_data, model_class):
+    def forward(self, input_data):
         out = self.embed(input_data)
-        if model_class == "conv2d":
+        if self.model_class == "conv2d":
             out = self.conv2d(out).squeeze()
             out = self.max_pool2d(out).squeeze()
-        elif model_class == "conv1d":
+        elif self.model_class == "conv1d":
             out = out.permute(0, 2, 1)
             out = self.conv1d_and_max_pool(out).squeeze()
         else:
             raise ValueError("model class is wrong!")
-
         out = self.fc_and_softmax(out)
         return out

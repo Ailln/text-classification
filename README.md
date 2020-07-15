@@ -128,7 +128,7 @@ pythom -m server.send_data
 - [ ] tensorflow rnn
 - [x] tensorflow flask server
 - [x] pytorch cnn
-- [ ] pytorch rnn
+- [x] pytorch rnn
 - [ ] pytorch flask server
 - [x] sklearn svm
 - [x] sklearn bayes

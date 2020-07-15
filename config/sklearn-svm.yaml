@@ -1,7 +1,0 @@
-data_path: "./data/"
-train_data_path: "./data/THUCNews-5_2000/train/"
-validate_data_path: "./data/THUCNews-5_2000/validate/"
-test_data_path: "./data/THUCNews-5_2000/test/"
-output_path: "./output/"
-
-frame_class: "sklearn"
