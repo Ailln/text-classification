@@ -15,11 +15,6 @@ class Model(nn.Module):
         self.embedding_size = config["embedding_size"]
         self.vocab_size = config["vocab_size"]
         self.num_classes = config["num_classes"]
-        self.filter_size = config["filter_size"]
-        self.kernel_size = config["kernel_size"]
-        self.opt_name = config["opt_name"]
-        self.lr = config["learning_rate"]
-        self.dropout_keep_prob = config["dropout_keep_prob"]
 
         self.embed = nn.Embedding(self.vocab_size, self.embedding_size)
         self.rnn = nn.LSTM(
@@ -37,10 +32,9 @@ class Model(nn.Module):
         out = self.embed(input_data)
         out = out.permute(1, 0, 2)
         hidden = Variable(torch.zeros(self.num_layers, self.seq_length, self.hidden_size))
-        if USE_CUDA:
-            hidden = hidden.cuda()
         context = Variable(torch.zeros(self.num_layers, self.seq_length, self.hidden_size))
         if USE_CUDA:
+            hidden = hidden.cuda()
             context = context.cuda()
 
         out, _ = self.rnn(out, (hidden, context))  # seq, batch, hidden

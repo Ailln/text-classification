@@ -2,7 +2,10 @@
 
 ## 1 简介
 
-`文本分类`是 NLP 的基本任务之一，通过此任务的学习可以快速熟悉 NLP 的工作流程，同时了解 NLP 算法所能实现的效果。
+`文本分类`　是 NLP 的基本任务之一，通过此任务的学习可以快速熟悉 NLP 的工作流程，同时了解 NLP 算法所能实现的效果。
+
+本项目包含了 `tensorflow` `pytorch` `sklearn` 三个框架的各种不同实现，包括 `cnn` `rnn` 等。
+除此之外，还提供了基本部署方法，可以使用 RESTful API 访问！
 
 ## 2 数据
 
@@ -88,25 +91,23 @@ git clone https://github.com/kinggreenhall/text-classification.git
 cd text-classification
 
 # 安装依赖
-pip install -r requirements.txt
+bash script/tf1-env.sh
 
 # 准备数据
-bash ./script/prepare_data.sh
+bash script/prepare_data.sh
 
 # 开始训练
-python -m run.tensorflow_cnn
-# 或者（需要替换 $config_path）
-python -m run.tensorflow_cnn train $config_path
+python -m run.tensorflow -m cnn
 
-# 测试模型（需要替换 $train_time）
-python -m run.tensorflow_cnn test $train_time
+# 测试模型（需要替换 $train_date）
+python -m run.tensorflow -r test -d $train_date
 ```
 
 ## 5 可视化
 
 ```bash
-# 使用 Tensorboard 进行可视化（需要替换 $train_time）
-tensorboard --logdir ./output/$train_time/log
+# 使用 Tensorboard 进行可视化（需要替换 $train_date）
+tensorboard --logdir ./output/$train_date/log
 ```
 
 > 当前仅 tensorflow 可用。
@@ -126,6 +127,8 @@ pythom -m server.send_data
 
 - [x] tensorflow cnn
 - [ ] tensorflow rnn
+- [ ] tensorflow_v2 cnn
+- [ ] tensorflow_v2 rnn
 - [x] tensorflow flask server
 - [x] pytorch cnn
 - [x] pytorch rnn

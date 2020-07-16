@@ -1,4 +1,4 @@
-import sys
+import argparse
 
 import numpy as np
 import tensorflow as tf
@@ -9,6 +9,15 @@ from util import batch_utils
 from util import conf_utils
 from util import output_utils
 from model.tensorflow import cnn
+from model.tensorflow_v2 import cnn2
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-r", "--run", default="train", help="run type")
+parser.add_argument("-c", "--config", default="./config/pytorch.yaml", help="run config")
+parser.add_argument("-m", "--model", default="cnn", help="model name")
+parser.add_argument("-d", "--date", default="", help="date file name")
+parser.add_argument("-t", "--text", default="", help="infer text")
+args = parser.parse_args()
 
 
 def train(config_path):
@@ -79,7 +88,7 @@ def train(config_path):
                 break
 
         time_str = config["time_now"]
-        print(f">> use this command for test:\npython -m run.tensorflow_cnn test {time_str} ")
+        print(f">> use this command for test:\npython -m run.tensorflow -r test -d {time_str} ")
 
 
 def test(time_str):
@@ -142,17 +151,39 @@ def get_server_sess(time_str):
     return sess, pred, target_vocab, input_vocab, model
 
 
-if __name__ == '__main__':
-    args = sys.argv
-    if len(args) == 1:
-        config_data_path = "./config/tensorflow-cnn.yaml"
-        train(config_data_path)
-    elif len(args) == 3:
-        if args[1] == "train":
-            train(args[2])
-        elif args[1] == "test":
-            test(args[2])
-        else:
-            raise ValueError("The first parameter is wrong, only support train or test!")
+def train_v2(config_path):
+    config = conf_utils.init_train_config(config_path)
+    train_input, train_target, validate_input, validate_target = data_utils.gen_train_data(config)
+
+    print(">> build model...")
+    if args.model == "cnn":
+        model = cnn2.Model(config).build()
+    # elif args.model == "rnn":
+    #     model = rnn.Model(config).build()
     else:
-        raise ValueError("Incorrent parameter length!")
+        raise Exception(f"error model: {args.model}")
+
+    model.summary()
+
+    model.fit(train_input, train_target, batch_size=64, epochs=20, validation_data=(validate_input, validate_target))
+
+    config = conf_utils.init_test_config(config["time_now"])
+    test_input, test_target = data_utils.gen_test_data(config)
+    model.evaluate(test_input, test_target, batch_size=64)
+
+
+if __name__ == '__main__':
+    if args.run == "train":
+        train(args.config)
+    elif args.run == "test":
+        if args.date == "":
+            raise ValueError("test need -d arg")
+        else:
+            test(args.date)
+    elif args.run == "infer":
+        if args.text == "":
+            raise ValueError("infer need -t arg")
+        else:
+            infer(args.text)
+    else:
+        raise ValueError("The first parameter is wrong, only support train or test!")

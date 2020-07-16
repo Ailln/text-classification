@@ -48,4 +48,3 @@ class Model(object):
 
         pred = tf.argmax(tf.nn.softmax(logits), 1)
         return train_step, pred, loss
-

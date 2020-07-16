@@ -1,9 +1,9 @@
 from flask import Flask, request
 
-from run import tensorflow_cnn
+from run import tensorflow
 
 time_str = "18-08-14_23-58-25"
-sess, pred, target_vocab, input_vocab, model = tensorflow_cnn.get_server_sess(time_str)
+sess, pred, target_vocab, input_vocab, model = tensorflow.get_server_sess(time_str)
 
 app = Flask(__name__)
 

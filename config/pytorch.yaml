@@ -8,7 +8,7 @@ output_path: "./output/"
 
 frame_class: "pytorch"
 
-seq_length: 1000
+seq_length: 100
 num_classes: 5
 filter_size: 256
 kernel_size: 3
@@ -26,5 +26,5 @@ opt_name: adam
 model_class: conv1d
 
 # rnn
-hidden_size: 256
+hidden_size: 1024
 num_layers: 1
